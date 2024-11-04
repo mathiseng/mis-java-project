@@ -6,18 +6,24 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mis_java_project.databinding.ListItemBinding;
 import com.example.mis_java_project.data.model.MediaItem;
+import com.example.mis_java_project.databinding.ListItemBinding;
 
 import java.util.List;
 
 public class MediaItemListAdapter extends RecyclerView.Adapter<MediaItemListAdapter.ViewHolder> {
+    public interface OnClickItem {
+        void onClickMediaItem(MediaItem item);
+    }
 
 
-    List<MediaItem> mediaItems;
+    private List<MediaItem> mediaItems;
+    private final OnClickItem clickListener;
 
-    public MediaItemListAdapter(List<MediaItem> mediaItems) {
+
+    public MediaItemListAdapter(List<MediaItem> mediaItems, OnClickItem onClickItem) {
         this.mediaItems = mediaItems;
+        this.clickListener = onClickItem;
     }
 
 
@@ -33,6 +39,8 @@ public class MediaItemListAdapter extends RecyclerView.Adapter<MediaItemListAdap
     public void onBindViewHolder(@NonNull MediaItemListAdapter.ViewHolder holder, int position) {
         MediaItem item = mediaItems.get(position);
         holder.bind(item);
+        holder.binding.mediaItemOption.setOnClickListener(view -> clickListener.onClickMediaItem(item));
+
     }
 
     @Override
@@ -58,6 +66,5 @@ public class MediaItemListAdapter extends RecyclerView.Adapter<MediaItemListAdap
             binding.setMediaItem(item);
             binding.executePendingBindings();
         }
-
     }
 }

@@ -34,9 +34,7 @@ public class MediaItemRepository {
     }
 
     public CompletableFuture<Void> delete(MediaItem mediaItem) {
-        return CompletableFuture.runAsync(() -> {
-            mediaItemDao.delete(mediaItem);
-        });
+        return CompletableFuture.runAsync(() -> mediaItemDao.delete(mediaItem));
     }
 
     public CompletableFuture<Void> deleteAllItems() {

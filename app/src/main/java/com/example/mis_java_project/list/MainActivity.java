@@ -3,6 +3,7 @@ package com.example.mis_java_project.list;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -12,11 +13,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.mis_java_project.R;
+import com.example.mis_java_project.data.model.MediaItem;
 import com.example.mis_java_project.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
+    ListViewViewModel mediaItemViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,19 +28,24 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         //setContentView(R.layout.activity_main);
 
-        //Setup Databinding
+        //Setup DataBinding
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.mediaItemList.setLayoutManager(new LinearLayoutManager(this));
 
-        ListViewViewModel mediaItemViewModel = new ViewModelProvider(this).get(ListViewViewModel.class);
+        //Setup ViewModel
+        mediaItemViewModel = new ViewModelProvider(this).get(ListViewViewModel.class);
 
-        MediaItemListAdapter adapter = new MediaItemListAdapter(new ArrayList<>());
+        //Setup RecyclerView
+        MediaItemListAdapter adapter = new MediaItemListAdapter(new ArrayList<>(), mediaItemViewModel::onSelectItem);
         binding.mediaItemList.setAdapter(adapter);
 
+        //Observe UiState changes
         mediaItemViewModel.uiState().observe(this, listViewUiState -> {
             adapter.setMediaItems(listViewUiState.mediaItemList());
+            if (listViewUiState.showDialog()) {
+                showMediaItemDialog(listViewUiState.selectedMediaItem());
+            }
         });
-
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -45,5 +54,13 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        binding.addIcon.setOnClickListener(view -> mediaItemViewModel.onAddIconClicked());
+
     }
+
+    private void showMediaItemDialog(@Nullable MediaItem mediaItem) {
+        MediaItemDialogFragment dialogFragment = new MediaItemDialogFragment(mediaItem, mediaItemViewModel);
+        dialogFragment.show(getSupportFragmentManager(), "MediaItemDialogFragment");
+    }
+
 }
