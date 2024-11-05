@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.mis_java_project.R;
 import com.example.mis_java_project.data.model.MediaItem;
 import com.example.mis_java_project.databinding.ActivityMainBinding;
+import com.example.mis_java_project.dialog.MediaItemDialogFragment;
 
 import java.util.ArrayList;
 
@@ -26,20 +27,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        //setContentView(R.layout.activity_main);
+
+        //Setup ViewModel
+        mediaItemViewModel = new ViewModelProvider(this).get(ListViewViewModel.class);
 
         //Setup DataBinding
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.mediaItemList.setLayoutManager(new LinearLayoutManager(this));
+        binding.setViewModel(mediaItemViewModel);
 
-        //Setup ViewModel
-        mediaItemViewModel = new ViewModelProvider(this).get(ListViewViewModel.class);
 
         //Setup RecyclerView
         MediaItemListAdapter adapter = new MediaItemListAdapter(new ArrayList<>(), mediaItemViewModel::onSelectItem);
         binding.mediaItemList.setAdapter(adapter);
 
-        //Observe UiState changes
+        //Observe ListView UiState changes
         mediaItemViewModel.uiState().observe(this, listViewUiState -> {
             adapter.setMediaItems(listViewUiState.mediaItemList());
             if (listViewUiState.showDialog()) {
@@ -53,13 +55,10 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        binding.addIcon.setOnClickListener(view -> mediaItemViewModel.onAddIconClicked());
-
     }
 
     private void showMediaItemDialog(@Nullable MediaItem mediaItem) {
-        MediaItemDialogFragment dialogFragment = new MediaItemDialogFragment(mediaItem, mediaItemViewModel);
+        MediaItemDialogFragment dialogFragment = new MediaItemDialogFragment(mediaItem);
         dialogFragment.show(getSupportFragmentManager(), "MediaItemDialogFragment");
     }
 

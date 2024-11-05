@@ -1,5 +1,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
+
     <data>
+
+        <variable
+            name="viewModel"
+            type="com.example.mis_java_project.dialog.DialogViewViewModel" />
+
         <variable
             name="mediaItem"
             type="com.example.mis_java_project.data.model.MediaItem" />
@@ -28,6 +34,7 @@
             android:focusable="true"
             android:hint="Titel"
             android:inputType="text"
+            android:onTextChanged="@{(text, start, before, count) -> viewModel.onTextChanged(text)}"
             android:text="@={mediaItem.title}" />
 
     </LinearLayout>
