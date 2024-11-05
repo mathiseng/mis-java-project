@@ -8,24 +8,27 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.mis_java_project.data.model.MediaItem;
 import com.example.mis_java_project.databinding.DialogMediaItemBinding;
+import com.example.mis_java_project.dialog.DialogViewViewModel;
 
 public class MediaItemDialogFragment extends DialogFragment {
     private DialogMediaItemBinding binding;
     private final MediaItem mediaItem;
-    private final ListViewViewModel mediaItemViewModel;
 
     // Constructor to pass in the item and ViewModel
-    public MediaItemDialogFragment(MediaItem mediaItem, ListViewViewModel mediaItemViewModel) {
+    public MediaItemDialogFragment(MediaItem mediaItem) {
         this.mediaItem = mediaItem;
-        this.mediaItemViewModel = mediaItemViewModel;
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        DialogViewViewModel dialogViewViewModel = new ViewModelProvider(requireActivity()).get(DialogViewViewModel.class);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
 
         LayoutInflater inflater = requireActivity().getLayoutInflater();
@@ -37,10 +40,9 @@ public class MediaItemDialogFragment extends DialogFragment {
                 .setPositiveButton(mediaItem == null ? "Erstellen" : "Ändern", null);
 
         if (mediaItem != null) {
-            builder.setNegativeButton("Löschen", (dialog, id) -> mediaItemViewModel.delete(mediaItem));
+            builder.setNegativeButton("Löschen", (dialog, id) -> dialogViewViewModel.onDeleteMediaItem(mediaItem));
         } else {
             builder.setNegativeButton("Abbrechen", (dialog, id) -> {
-                mediaItemViewModel.onDialogFinished();
                 dialog.dismiss();
             });
         }
@@ -59,10 +61,9 @@ public class MediaItemDialogFragment extends DialogFragment {
                 }
 
                 // If title is not empty, save item
-                mediaItemViewModel.onSaveMediaItem(mediaItem, title);
+                dialogViewViewModel.onSaveMediaItem(mediaItem, title);
 
                 // Close the dialog if validation is successful
-                mediaItemViewModel.onDialogFinished();
                 dialog.dismiss();
             });
         });

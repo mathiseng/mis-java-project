@@ -1,5 +1,6 @@
 package com.example.mis_java_project.data.database;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -22,7 +23,7 @@ public interface MediaItemDao {
     void delete(MediaItem mediaItem);
 
     @Query("SELECT * FROM media_items")
-    List<MediaItem> getAllMediaItems();
+    LiveData<List<MediaItem>> getAllMediaItems();
 
     @Query("DELETE FROM media_items")
     void deleteAllMediaItems();
