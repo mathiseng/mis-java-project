@@ -3,6 +3,7 @@ package com.example.mis_java_project.list;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.mis_java_project.databinding.OptionsMediaItemBinding;
+import com.example.mis_java_project.dialog.ConfirmDeletionFragment;
 import com.example.mis_java_project.dialog.DialogViewViewModel;
 
 public class MediaItemOptionsFragment extends DialogFragment {
@@ -38,7 +40,7 @@ public class MediaItemOptionsFragment extends DialogFragment {
         builder.setView(binding.getRoot());
 
         binding.deleteButton.setOnClickListener(view -> {
-            dialogViewViewModel.onDeleteMediaItem(mediaItem);
+            showConfirmDeletionDialog();
             dismiss();
         });
 
@@ -48,5 +50,10 @@ public class MediaItemOptionsFragment extends DialogFragment {
         });
 
         return builder.create();
+    }
+
+    private void showConfirmDeletionDialog() {
+        ConfirmDeletionFragment optionsFragment = new ConfirmDeletionFragment();
+        optionsFragment.show(requireActivity().getSupportFragmentManager(), "ConfirmDeletionFragment");
     }
 }

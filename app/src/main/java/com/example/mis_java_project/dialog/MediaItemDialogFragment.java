@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.mis_java_project.data.model.MediaItem;
 import com.example.mis_java_project.databinding.DialogMediaItemBinding;
 
 public class MediaItemDialogFragment extends DialogFragment {
@@ -35,7 +34,9 @@ public class MediaItemDialogFragment extends DialogFragment {
                 .setPositiveButton(mediaItem == null ? "Erstellen" : "Ändern", null);
 
         if (mediaItem != null) {
-            builder.setNegativeButton("Löschen", (dialog, id) -> dialogViewViewModel.onDeleteMediaItem(mediaItem));
+            builder.setNegativeButton("Löschen", (dialog, id) -> {
+                showConfirmDeletionDialog();
+            });
         } else {
             builder.setNegativeButton("Abbrechen", (dialog, id) -> {
                 dialog.dismiss();
@@ -61,5 +62,10 @@ public class MediaItemDialogFragment extends DialogFragment {
             });
         });
         return dialog;
+    }
+
+    private void showConfirmDeletionDialog() {
+        ConfirmDeletionFragment optionsFragment = new ConfirmDeletionFragment();
+        optionsFragment.show(requireActivity().getSupportFragmentManager(), "ConfirmDeletionFragment");
     }
 }
