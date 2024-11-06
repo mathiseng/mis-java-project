@@ -20,25 +20,25 @@ public class DialogViewViewModel extends AndroidViewModel {
     }
 
 
-    private MediaItem mediaItem = null;
     private String errorMessage = "Titel darf nicht Leer sein";
 
     public DialogViewViewModel(Application application) {
         super(application);
         mediaItemRepository = MediaItemRepository.getInstance(application);
-        uiState.setValue(new DialogViewUiState("", null));
+        uiState.setValue(new DialogViewUiState("", null, null));
         SharedStateRepository sharedStateRepository = SharedStateRepository.getInstance();
         sharedStateRepository.selectedItem.observeForever(mediaItem -> {
-            this.mediaItem = mediaItem;
+            uiState.setValue(uiState.getValue().copy("", mediaItem, null));
+
         });
     }
 
-    public void onDeleteMediaItem() {
+    public void onDeleteMediaItem(MediaItem mediaItem) {
         mediaItemRepository.delete(mediaItem);
-        uiState.setValue(uiState.getValue().copy("", null));
+        uiState.setValue(uiState.getValue().copy("", null, null));
     }
 
-    public void onSaveMediaItem() {
+    public void onSaveMediaItem(MediaItem mediaItem) {
         if (uiState.getValue() != null) {
             var title = uiState.getValue().title();
             if (mediaItem != null) {
@@ -48,7 +48,7 @@ public class DialogViewViewModel extends AndroidViewModel {
                 MediaItem newItem = new MediaItem(title, "https://example.com/image.jpg", System.currentTimeMillis());
                 mediaItemRepository.insert(newItem);
             }
-            uiState.setValue(uiState.getValue().copy("", null));
+            uiState.setValue(uiState.getValue().copy("", null, null));
         }
     }
 
@@ -56,7 +56,7 @@ public class DialogViewViewModel extends AndroidViewModel {
         var text = charSequence.toString().trim();
         if (uiState.getValue() != null) {
             String errorMessage = text.isEmpty() ? this.errorMessage : null;
-            uiState.postValue(uiState.getValue().copy(text, errorMessage));
+            uiState.postValue(uiState.getValue().copy(text, uiState.getValue().selectedItem(), errorMessage));
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.example.mis_java_project.list;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
@@ -38,14 +39,18 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Setup RecyclerView
-        MediaItemListAdapter adapter = new MediaItemListAdapter(new ArrayList<>(), mediaItemViewModel::onSelectItem);
+        MediaItemListAdapter adapter = new MediaItemListAdapter(new ArrayList<>(), mediaItemViewModel::onOptionsIconClicked);
         binding.mediaItemList.setAdapter(adapter);
 
         //Observe ListView UiState changes
         mediaItemViewModel.uiState().observe(this, listViewUiState -> {
             adapter.setMediaItems(listViewUiState.mediaItemList());
             if (listViewUiState.showDialog()) {
-                showMediaItemDialog(listViewUiState.selectedMediaItem());
+                showMediaItemDialog();
+            }
+
+            if (listViewUiState.showOptions()) {
+                showMediaItemOptionsDialog(mediaItemViewModel);
             }
         });
 
@@ -57,9 +62,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void showMediaItemDialog(@Nullable MediaItem mediaItem) {
-        MediaItemDialogFragment dialogFragment = new MediaItemDialogFragment(mediaItem);
+    private void showMediaItemDialog() {
+        MediaItemDialogFragment dialogFragment = new MediaItemDialogFragment();
         dialogFragment.show(getSupportFragmentManager(), "MediaItemDialogFragment");
     }
 
+    private void showMediaItemOptionsDialog(ListViewViewModel listViewViewModel) {
+        Log.d("TESTOO", "In showMethod");
+        MediaItemOptionsFragment optionsFragment = new MediaItemOptionsFragment(listViewViewModel);
+        optionsFragment.show(getSupportFragmentManager(), "MediaItemOptionsFragment");
+    }
 }

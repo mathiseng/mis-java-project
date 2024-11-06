@@ -15,23 +15,19 @@ import com.example.mis_java_project.databinding.DialogMediaItemBinding;
 
 public class MediaItemDialogFragment extends DialogFragment {
     private DialogMediaItemBinding binding;
-    private final MediaItem mediaItem;
-
     // Constructor to pass in the item and ViewModel
-    public MediaItemDialogFragment(MediaItem mediaItem) {
-        this.mediaItem = mediaItem;
-    }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         DialogViewViewModel dialogViewViewModel = new ViewModelProvider(requireActivity()).get(DialogViewViewModel.class);
-
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        var uiState = dialogViewViewModel.uiState();
+        var mediaItem = uiState.getValue().selectedItem();
 
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-        binding = DialogMediaItemBinding.inflate(inflater, null, false);
+        binding = DialogMediaItemBinding.inflate(inflater);
         binding.setMediaItem(mediaItem);
         binding.setViewModel(dialogViewViewModel);
 
@@ -39,7 +35,7 @@ public class MediaItemDialogFragment extends DialogFragment {
                 .setPositiveButton(mediaItem == null ? "Erstellen" : "Ändern", null);
 
         if (mediaItem != null) {
-            builder.setNegativeButton("Löschen", (dialog, id) -> dialogViewViewModel.onDeleteMediaItem());
+            builder.setNegativeButton("Löschen", (dialog, id) -> dialogViewViewModel.onDeleteMediaItem(mediaItem));
         } else {
             builder.setNegativeButton("Abbrechen", (dialog, id) -> {
                 dialog.dismiss();
@@ -58,7 +54,7 @@ public class MediaItemDialogFragment extends DialogFragment {
                 }
 
                 // If title is not empty, save item
-                dialogViewViewModel.onSaveMediaItem();
+                dialogViewViewModel.onSaveMediaItem(mediaItem);
 
                 // Close the dialog if validation is successful
                 dialog.dismiss();
