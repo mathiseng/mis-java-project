@@ -39,7 +39,7 @@ public class MediaItemDialogFragment extends DialogFragment {
                 .setPositiveButton(mediaItem == null ? "Erstellen" : "Ändern", null);
 
         if (mediaItem != null) {
-            builder.setNegativeButton("Löschen", (dialog, id) -> dialogViewViewModel.onDeleteMediaItem(mediaItem));
+            builder.setNegativeButton("Löschen", (dialog, id) -> dialogViewViewModel.onDeleteMediaItem());
         } else {
             builder.setNegativeButton("Abbrechen", (dialog, id) -> {
                 dialog.dismiss();
@@ -58,7 +58,7 @@ public class MediaItemDialogFragment extends DialogFragment {
                 }
 
                 // If title is not empty, save item
-                dialogViewViewModel.onSaveMediaItem(mediaItem);
+                dialogViewViewModel.onSaveMediaItem();
 
                 // Close the dialog if validation is successful
                 dialog.dismiss();

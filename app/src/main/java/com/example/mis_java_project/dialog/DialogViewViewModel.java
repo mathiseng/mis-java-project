@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.mis_java_project.MediaItemRepository;
+import com.example.mis_java_project.SharedStateRepository;
 import com.example.mis_java_project.data.model.MediaItem;
 
 public class DialogViewViewModel extends AndroidViewModel {
@@ -19,21 +20,25 @@ public class DialogViewViewModel extends AndroidViewModel {
     }
 
 
+    private MediaItem mediaItem = null;
     private String errorMessage = "Titel darf nicht Leer sein";
 
     public DialogViewViewModel(Application application) {
         super(application);
         mediaItemRepository = MediaItemRepository.getInstance(application);
         uiState.setValue(new DialogViewUiState("", null));
-
+        SharedStateRepository sharedStateRepository = SharedStateRepository.getInstance();
+        sharedStateRepository.selectedItem.observeForever(mediaItem -> {
+            this.mediaItem = mediaItem;
+        });
     }
 
-    public void onDeleteMediaItem(MediaItem mediaItem) {
+    public void onDeleteMediaItem() {
         mediaItemRepository.delete(mediaItem);
         uiState.setValue(uiState.getValue().copy("", null));
     }
 
-    public void onSaveMediaItem(MediaItem mediaItem) {
+    public void onSaveMediaItem() {
         if (uiState.getValue() != null) {
             var title = uiState.getValue().title();
             if (mediaItem != null) {
