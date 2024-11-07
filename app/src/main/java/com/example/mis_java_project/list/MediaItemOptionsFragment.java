@@ -47,14 +47,14 @@ public class MediaItemOptionsFragment extends DialogFragment {
         builder.setView(binding.getRoot());
 
         binding.deleteButton.setOnClickListener(view -> {
-            dialogViewViewModel.setShouldDismiss(false);
+            dialogViewViewModel.setPreserveStateOnNavigation(false);
             showConfirmDeletionDialog();
 
             dismiss();
         });
 
         binding.editButton.setOnClickListener(view -> {
-            dialogViewViewModel.setShouldDismiss(false);
+            dialogViewViewModel.setPreserveStateOnNavigation(false);
             listViewViewModel.onEditItem(mediaItem);
             dismiss();
         });

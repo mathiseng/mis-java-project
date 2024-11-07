@@ -19,6 +19,7 @@ public class DetailsViewViewModel extends AndroidViewModel {
     }
 
     MediaItemRepository mediaItemRepository;
+    private final SharedStateRepository sharedStateRepository;
 
     private boolean isInitialized = false;
 
@@ -28,9 +29,9 @@ public class DetailsViewViewModel extends AndroidViewModel {
 
         //Observe MediaItemRepository and merge changes of list
         mediaItemRepository = MediaItemRepository.getInstance(application);
-        SharedStateRepository sharedStateRepository = SharedStateRepository.getInstance();
+        sharedStateRepository = SharedStateRepository.getInstance();
         sharedStateRepository.selectedItem.observeForever(mediaItem -> {
-            uiState.setValue(uiState.getValue().copy(mediaItem, null, false));
+            uiState.setValue(uiState.getValue().copy(mediaItem, false, false));
         });
 
         mediaItemRepository.mediaItems.observeForever(mediaItems -> {
@@ -49,6 +50,7 @@ public class DetailsViewViewModel extends AndroidViewModel {
     }
 
     public void onDismissDetails() {
+        sharedStateRepository.onChangeSelectedMediaItem(null);
         uiState.setValue(uiState.getValue().copy(null, false, true));
     }
 }

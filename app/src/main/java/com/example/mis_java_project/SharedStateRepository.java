@@ -11,8 +11,10 @@ import com.example.mis_java_project.data.model.MediaItem;
 public class SharedStateRepository {
 
     private final MutableLiveData<MediaItem> _selectedItem = new MutableLiveData<>();
-
     public final LiveData<MediaItem> selectedItem = _selectedItem;
+
+    private final MutableLiveData<Boolean> _shouldResetStateOnClose = new MutableLiveData<>(false);
+    public final LiveData<Boolean> shouldResetStateOnClose = _shouldResetStateOnClose;
 
     private static SharedStateRepository INSTANCE;
 
@@ -26,5 +28,9 @@ public class SharedStateRepository {
 
     public void onChangeSelectedMediaItem(MediaItem mediaItem) {
         _selectedItem.setValue(mediaItem);
+    }
+
+    public void setResetStateOnClose(Boolean shouldReset) {
+        _shouldResetStateOnClose.setValue(shouldReset);
     }
 }

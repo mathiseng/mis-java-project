@@ -36,7 +36,7 @@ public class ConfirmDeletionFragment extends DialogFragment {
         ConfirmDeletionDialogBinding binding = ConfirmDeletionDialogBinding.inflate(inflater);
         binding.setMediaItem(mediaItem);
         builder.setView(binding.getRoot()).setPositiveButton("Löschen", (dialog, id) -> {
-            dialogViewViewModel.setShouldDismiss(false);
+            dialogViewViewModel.setPreserveStateOnNavigation(false);
             dialogViewViewModel.onDeleteMediaItem(mediaItem);
         });
         builder.setNegativeButton("Abbrechen", (dialog, id) -> dismiss());

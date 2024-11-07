@@ -2,8 +2,6 @@ package com.example.mis_java_project.list;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -12,7 +10,6 @@ import androidx.lifecycle.MediatorLiveData;
 import com.example.mis_java_project.MediaItemRepository;
 import com.example.mis_java_project.SharedStateRepository;
 import com.example.mis_java_project.data.model.MediaItem;
-import com.example.mis_java_project.details.DetailsActivity;
 
 import java.util.ArrayList;
 
@@ -53,23 +50,27 @@ public class ListViewViewModel extends AndroidViewModel {
 
     public void onEditItem(MediaItem mediaItem) {
         sharedStateRepository.onChangeSelectedMediaItem(mediaItem);
+        sharedStateRepository.setResetStateOnClose(true);
         uiState.setValue(uiState.getValue().copy(null, mediaItem, true, false));
 
     }
 
     public void onSelectItem(MediaItem mediaItem) {
+        sharedStateRepository.setResetStateOnClose(false);
         sharedStateRepository.onChangeSelectedMediaItem(mediaItem);
         uiState.setValue(uiState.getValue().copy(null, mediaItem, false, false));
     }
 
     public void onAddIconClicked() {
         if (uiState.getValue() != null) {
+            sharedStateRepository.setResetStateOnClose(true);
             uiState.setValue(uiState.getValue().copy(null, null, true, null));
         }
     }
 
     public void onOptionsIconClicked(MediaItem mediaItem) {
         sharedStateRepository.onChangeSelectedMediaItem(mediaItem);
+        sharedStateRepository.setResetStateOnClose(true);
         uiState.setValue(uiState.getValue().copy(null, mediaItem, false, true));
 
     }

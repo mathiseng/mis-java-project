@@ -24,7 +24,9 @@ public class DialogViewViewModel extends AndroidViewModel {
 
     private String errorMessage = "Titel darf nicht Leer sein";
 
-    private boolean shouldDismiss = true;
+    private boolean preserveStateOnNavigation = true;
+    private final boolean shouldResetSateOnClose;
+
 
     public DialogViewViewModel(Application application) {
         super(application);
@@ -38,6 +40,8 @@ public class DialogViewViewModel extends AndroidViewModel {
                 uiState.setValue(uiState.getValue().copy("", mediaItem, null));
             }
         });
+
+        shouldResetSateOnClose = Boolean.TRUE.equals(sharedStateRepository.shouldResetStateOnClose.getValue());
     }
 
     public void onDeleteMediaItem(MediaItem mediaItem) {
@@ -68,27 +72,26 @@ public class DialogViewViewModel extends AndroidViewModel {
     }
 
 
-
     /**
      * A helper method to prevent onClick events of buttons (e.g. edit button) to reset the selectedItem and uiState,
      * because we need that information in further navigation
-     *
      */
-    public void setShouldDismiss(boolean shouldDismiss) {
-        this.shouldDismiss = shouldDismiss;
+    public void setPreserveStateOnNavigation(boolean preserveStateOnNavigation) {
+        this.preserveStateOnNavigation = preserveStateOnNavigation;
     }
 
     /**
      * To handle dismiss actions that where invoked due to touch outside.
      * Resets the selectedItem and the uiState to have a clean State after closing the dialog
-     *
      */
 
     public void onDismiss() {
-        if (shouldDismiss) {
+        if (preserveStateOnNavigation && shouldResetSateOnClose) {
             sharedStateRepository.onChangeSelectedMediaItem(null);
             uiState.setValue(uiState.getValue().copy("", null, null));
+            sharedStateRepository.setResetStateOnClose(true);
         }
-        shouldDismiss = true;
+        //Reset value to default state after handling
+        preserveStateOnNavigation = true;
     }
 }
