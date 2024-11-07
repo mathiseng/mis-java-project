@@ -18,12 +18,15 @@ public class MediaItemListAdapter extends RecyclerView.Adapter<MediaItemListAdap
 
 
     private List<MediaItem> mediaItems;
-    private final OnClickItem clickListener;
+    private final OnClickItem optionsClickListener;
+    private final OnClickItem detailsClickListener;
 
 
-    public MediaItemListAdapter(List<MediaItem> mediaItems, OnClickItem onClickItem) {
+    public MediaItemListAdapter(List<MediaItem> mediaItems, OnClickItem onClickDetails, OnClickItem onClickOptions) {
         this.mediaItems = mediaItems;
-        this.clickListener = onClickItem;
+        this.optionsClickListener = onClickOptions;
+        this.detailsClickListener = onClickDetails;
+
     }
 
 
@@ -39,8 +42,8 @@ public class MediaItemListAdapter extends RecyclerView.Adapter<MediaItemListAdap
     public void onBindViewHolder(@NonNull MediaItemListAdapter.ViewHolder holder, int position) {
         MediaItem item = mediaItems.get(position);
         holder.bind(item);
-        holder.binding.mediaItemOption.setOnClickListener(view -> clickListener.onClickMediaItem(item));
-
+        holder.binding.mediaItemOption.setOnClickListener(view -> optionsClickListener.onClickMediaItem(item));
+        holder.binding.mediaItem.setOnClickListener(view -> detailsClickListener.onClickMediaItem(item));
     }
 
     @Override
@@ -59,7 +62,6 @@ public class MediaItemListAdapter extends RecyclerView.Adapter<MediaItemListAdap
         public ViewHolder(ListItemBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
-            // Define click listener for the ViewHolder's View
         }
 
         public void bind(MediaItem item) {

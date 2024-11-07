@@ -15,6 +15,8 @@ public class DialogViewViewModel extends AndroidViewModel {
 
     private final MutableLiveData<DialogViewUiState> uiState = new MutableLiveData<>();
 
+    private final SharedStateRepository sharedStateRepository;
+
     public LiveData<DialogViewUiState> uiState() {
         return uiState;
     }
@@ -22,14 +24,19 @@ public class DialogViewViewModel extends AndroidViewModel {
 
     private String errorMessage = "Titel darf nicht Leer sein";
 
+    private boolean shouldDismiss = true;
+
     public DialogViewViewModel(Application application) {
         super(application);
         mediaItemRepository = MediaItemRepository.getInstance(application);
         uiState.setValue(new DialogViewUiState("", null, null));
-        SharedStateRepository sharedStateRepository = SharedStateRepository.getInstance();
+        sharedStateRepository = SharedStateRepository.getInstance();
         sharedStateRepository.selectedItem.observeForever(mediaItem -> {
-            uiState.setValue(uiState.getValue().copy("", mediaItem, null));
-
+            if (mediaItem != null) {
+                uiState.setValue(uiState.getValue().copy(mediaItem.getTitle(), mediaItem, null));
+            } else {
+                uiState.setValue(uiState.getValue().copy("", mediaItem, null));
+            }
         });
     }
 
@@ -58,5 +65,30 @@ public class DialogViewViewModel extends AndroidViewModel {
             String errorMessage = text.isEmpty() ? this.errorMessage : null;
             uiState.postValue(uiState.getValue().copy(text, uiState.getValue().selectedItem(), errorMessage));
         }
+    }
+
+
+
+    /**
+     * A helper method to prevent onClick events of buttons (e.g. edit button) to reset the selectedItem and uiState,
+     * because we need that information in further navigation
+     *
+     */
+    public void setShouldDismiss(boolean shouldDismiss) {
+        this.shouldDismiss = shouldDismiss;
+    }
+
+    /**
+     * To handle dismiss actions that where invoked due to touch outside.
+     * Resets the selectedItem and the uiState to have a clean State after closing the dialog
+     *
+     */
+
+    public void onDismiss() {
+        if (shouldDismiss) {
+            sharedStateRepository.onChangeSelectedMediaItem(null);
+            uiState.setValue(uiState.getValue().copy("", null, null));
+        }
+        shouldDismiss = true;
     }
 }

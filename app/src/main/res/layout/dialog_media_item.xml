@@ -35,7 +35,7 @@
             android:hint="Titel"
             android:inputType="text"
             android:onTextChanged="@{(text, start, before, count) -> viewModel.onTextChanged(text)}"
-            android:text="@={mediaItem.title}" />
+            android:text="@={mediaItem.title}" ><requestFocus/></EditText>
 
     </LinearLayout>
 </layout>

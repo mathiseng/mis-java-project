@@ -1,10 +1,9 @@
 package com.example.mis_java_project.list;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -16,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.mis_java_project.R;
 import com.example.mis_java_project.data.model.MediaItem;
 import com.example.mis_java_project.databinding.ActivityMainBinding;
+import com.example.mis_java_project.details.DetailsActivity;
 import com.example.mis_java_project.dialog.MediaItemDialogFragment;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Setup RecyclerView
-        MediaItemListAdapter adapter = new MediaItemListAdapter(new ArrayList<>(), mediaItemViewModel::onOptionsIconClicked);
+        MediaItemListAdapter adapter = new MediaItemListAdapter(new ArrayList<>(), this::startDetailActivity, mediaItemViewModel::onOptionsIconClicked);
         binding.mediaItemList.setAdapter(adapter);
 
         //Observe ListView UiState changes
@@ -68,8 +68,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showMediaItemOptionsDialog(ListViewViewModel listViewViewModel) {
-        Log.d("TESTOO", "In showMethod");
         MediaItemOptionsFragment optionsFragment = new MediaItemOptionsFragment(listViewViewModel);
         optionsFragment.show(getSupportFragmentManager(), "MediaItemOptionsFragment");
+    }
+
+    public void startDetailActivity(MediaItem mediaItem) {
+        mediaItemViewModel.onSelectItem(mediaItem);
+        Intent intent = new Intent(this, DetailsActivity.class);
+
+        startActivity(intent);
     }
 }

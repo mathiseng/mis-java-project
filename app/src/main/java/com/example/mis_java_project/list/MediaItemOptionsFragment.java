@@ -2,8 +2,8 @@ package com.example.mis_java_project.list;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 
 import androidx.annotation.NonNull;
@@ -17,6 +17,7 @@ import com.example.mis_java_project.dialog.DialogViewViewModel;
 public class MediaItemOptionsFragment extends DialogFragment {
     private OptionsMediaItemBinding binding;
     ListViewViewModel listViewViewModel;
+    DialogViewViewModel dialogViewViewModel;
 
     // Constructor to pass in the item and ViewModel
     public MediaItemOptionsFragment(ListViewViewModel listViewViewModel) {
@@ -24,11 +25,17 @@ public class MediaItemOptionsFragment extends DialogFragment {
 
     }
 
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
+        dialogViewViewModel.onDismiss();
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        DialogViewViewModel dialogViewViewModel = new ViewModelProvider(requireActivity()).get(DialogViewViewModel.class);
+        dialogViewViewModel = new ViewModelProvider(requireActivity()).get(DialogViewViewModel.class);
         var uiState = dialogViewViewModel.uiState();
         var mediaItem = uiState.getValue().selectedItem();
 
@@ -40,12 +47,15 @@ public class MediaItemOptionsFragment extends DialogFragment {
         builder.setView(binding.getRoot());
 
         binding.deleteButton.setOnClickListener(view -> {
+            dialogViewViewModel.setShouldDismiss(false);
             showConfirmDeletionDialog();
+
             dismiss();
         });
 
         binding.editButton.setOnClickListener(view -> {
-            listViewViewModel.onSelectItem(mediaItem);
+            dialogViewViewModel.setShouldDismiss(false);
+            listViewViewModel.onEditItem(mediaItem);
             dismiss();
         });
 
