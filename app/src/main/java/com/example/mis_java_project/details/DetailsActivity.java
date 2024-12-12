@@ -31,6 +31,8 @@ public class DetailsActivity extends AppCompatActivity {
         DetailsScreenBinding binding = DataBindingUtil.setContentView(this, R.layout.details_screen);
         binding.setViewModel(detailsViewViewModel);
         binding.setMediaItem(detailsViewViewModel.uiState().getValue().selectedMediaItem());
+        binding.mediaImage.setImageURI(detailsViewViewModel.uiState().getValue().selectedMediaItem().getImageUri());
+
 
         //Observe ListView UiState changes
         detailsViewViewModel.uiState().observe(this, uiState -> {
@@ -39,8 +41,8 @@ public class DetailsActivity extends AppCompatActivity {
                 showConfirmDeletionDialog();
             }
 
-            if(uiState.dismissDetails()){
-               finish();
+            if (uiState.dismissDetails()) {
+                finish();
             }
         });
 

@@ -1,6 +1,8 @@
 package com.example.mis_java_project.dialog;
 
 import android.app.Application;
+import android.net.Uri;
+import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -9,6 +11,8 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.mis_java_project.MediaItemRepository;
 import com.example.mis_java_project.SharedStateRepository;
 import com.example.mis_java_project.data.model.MediaItem;
+
+import java.util.Objects;
 
 public class DialogViewViewModel extends AndroidViewModel {
     private final MediaItemRepository mediaItemRepository;
@@ -31,13 +35,13 @@ public class DialogViewViewModel extends AndroidViewModel {
     public DialogViewViewModel(Application application) {
         super(application);
         mediaItemRepository = MediaItemRepository.getInstance(application);
-        uiState.setValue(new DialogViewUiState("", null, null));
+        uiState.setValue(new DialogViewUiState("", null, null, null));
         sharedStateRepository = SharedStateRepository.getInstance();
         sharedStateRepository.selectedItem.observeForever(mediaItem -> {
             if (mediaItem != null) {
-                uiState.setValue(uiState.getValue().copy(mediaItem.getTitle(), mediaItem, null));
+                uiState.setValue(uiState.getValue().copy(mediaItem.getTitle(), mediaItem.getImageUri(), mediaItem, null));
             } else {
-                uiState.setValue(uiState.getValue().copy("", mediaItem, null));
+                uiState.setValue(uiState.getValue().copy("", null, mediaItem, null));
             }
         });
 
@@ -46,20 +50,24 @@ public class DialogViewViewModel extends AndroidViewModel {
 
     public void onDeleteMediaItem(MediaItem mediaItem) {
         mediaItemRepository.delete(mediaItem);
-        uiState.setValue(uiState.getValue().copy("", null, null));
+        uiState.setValue(uiState.getValue().copy("", null, null, null));
     }
 
     public void onSaveMediaItem(MediaItem mediaItem) {
         if (uiState.getValue() != null) {
             var title = uiState.getValue().title();
+            var imageUri = uiState.getValue().imageUri();
             if (mediaItem != null) {
-                mediaItem.setTitle(title);
-                mediaItemRepository.update(mediaItem);
+                var newMediaItem = new MediaItem(mediaItem);
+                newMediaItem.setTitle(title);
+                newMediaItem.setImageUri(imageUri);
+                mediaItemRepository.update(newMediaItem);
             } else {
-                MediaItem newItem = new MediaItem(title, "https://example.com/image.jpg", System.currentTimeMillis());
+                Log.d("TESTII,", Objects.requireNonNull(uiState().getValue()).toString());
+                MediaItem newItem = new MediaItem(title, imageUri.toString(), System.currentTimeMillis());
                 mediaItemRepository.insert(newItem);
             }
-            uiState.setValue(uiState.getValue().copy("", null, null));
+            uiState.setValue(uiState.getValue().copy("", null, null, null));
         }
     }
 
@@ -67,10 +75,15 @@ public class DialogViewViewModel extends AndroidViewModel {
         var text = charSequence.toString().trim();
         if (uiState.getValue() != null) {
             String errorMessage = text.isEmpty() ? this.errorMessage : null;
-            uiState.postValue(uiState.getValue().copy(text, uiState.getValue().selectedItem(), errorMessage));
+            uiState.postValue(uiState.getValue().copy(text, null, uiState.getValue().selectedItem(), errorMessage));
         }
     }
 
+    public void onImageChanged(Uri uri) {
+        if (uiState.getValue() != null) {
+            uiState.postValue(uiState.getValue().copy(null, uri, uiState.getValue().selectedItem(), errorMessage));
+        }
+    }
 
     /**
      * A helper method to prevent onClick events of buttons (e.g. edit button) to reset the selectedItem and uiState,
@@ -88,7 +101,7 @@ public class DialogViewViewModel extends AndroidViewModel {
     public void onDismiss() {
         if (preserveStateOnNavigation && shouldResetSateOnClose) {
             sharedStateRepository.onChangeSelectedMediaItem(null);
-            uiState.setValue(uiState.getValue().copy("", null, null));
+            uiState.setValue(uiState.getValue().copy("", null, null, null));
             sharedStateRepository.setResetStateOnClose(true);
         }
         //Reset value to default state after handling

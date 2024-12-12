@@ -3,11 +3,16 @@ package com.example.mis_java_project.dialog;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -43,6 +48,15 @@ public class MediaItemDialogFragment extends DialogFragment {
         binding.setMediaItem(mediaItem);
         binding.setViewModel(dialogViewViewModel);
 
+        uiState.observe(requireActivity(), dialogViewUiState -> {
+            Log.d("TESTII", "Change Image");
+
+            if (dialogViewUiState.imageUri() != null) {
+                Log.d("TESTII", dialogViewUiState.imageUri().toString());
+                //  binding.setImageUri(dialogViewUiState.imageUri());
+                binding.mediaItemImage.setImageURI(dialogViewUiState.imageUri());
+            }
+        });
         builder.setView(binding.getRoot())
                 .setPositiveButton(mediaItem == null ? "Erstellen" : "Ändern", null);
 
@@ -67,6 +81,11 @@ public class MediaItemDialogFragment extends DialogFragment {
                     return;  // Exit the listener, keeping the dialog open
                 }
 
+                if(dialogViewViewModel.uiState().getValue().imageUri() == null){
+                    binding.editTextTitle.setError("Ein Bild muss ausgewählt werden");
+                    return;
+                }
+
                 // If title is not empty, save item
                 dialogViewViewModel.onSaveMediaItem(mediaItem);
 
@@ -75,9 +94,20 @@ public class MediaItemDialogFragment extends DialogFragment {
             });
         });
 
+        ActivityResultLauncher<String> mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
+                new ActivityResultCallback<Uri>() {
+                    @Override
+                    public void onActivityResult(Uri uri) {
+                        // previewImage.setImageURI(uri);
+                        dialogViewViewModel.onImageChanged(uri);
+                    }
+                });
+        binding.buttonSelectPicture.setOnClickListener((view -> {
+            mGetContent.launch("image/*");
+        }));
         //Handle auto focus and showing keyboard for the editText
         //binding.editTextTitle.requestFocus();
-       // binding.editTextTitle.setSelection(mediaItem.getTitle().length());
+        // binding.editTextTitle.setSelection(mediaItem.getTitle().length());
 
 //        binding.editTextTitle.postDelayed(() -> {
 //            binding.editTextTitle.setSelection(binding.editTextTitle.getText().length());

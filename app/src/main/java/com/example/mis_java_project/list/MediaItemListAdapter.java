@@ -66,6 +66,7 @@ public class MediaItemListAdapter extends RecyclerView.Adapter<MediaItemListAdap
 
         public void bind(MediaItem item) {
             binding.setMediaItem(item);
+            binding.listItemImage.setImageURI(item.getImageUri());
             binding.executePendingBindings();
         }
     }

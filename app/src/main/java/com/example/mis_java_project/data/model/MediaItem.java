@@ -1,5 +1,7 @@
 package com.example.mis_java_project.data.model;
 
+import android.net.Uri;
+
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -17,6 +19,14 @@ public class MediaItem {
         this.imageSource = imageSource;
         this.creationDate = creationDate;
     }
+
+    public MediaItem(MediaItem mediaItem) {
+        this.id = mediaItem.id;
+        this.title = mediaItem.title;
+        this.imageSource = mediaItem.imageSource;
+        this.creationDate = mediaItem.creationDate;
+    }
+
 
     // Getters
     public String getTitle() {
@@ -50,5 +60,13 @@ public class MediaItem {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setImageUri(Uri imageSource) {
+        this.imageSource = imageSource.toString();
+    }
+
+    public Uri getImageUri() {
+        return Uri.parse(imageSource);
     }
 }
