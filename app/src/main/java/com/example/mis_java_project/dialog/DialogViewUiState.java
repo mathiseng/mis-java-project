@@ -3,20 +3,80 @@ package com.example.mis_java_project.dialog;
 import android.net.Uri;
 
 import androidx.annotation.Nullable;
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
 
+import com.example.mis_java_project.BR;
 import com.example.mis_java_project.data.model.MediaItem;
 
-public record DialogViewUiState(String title, Uri imageUri, MediaItem selectedItem,
-                                String errorMessage) {
+public class DialogViewUiState extends BaseObservable {
 
-    public static final DialogViewUiState initialUiState = new DialogViewUiState("", null, new MediaItem("", "", 0), null);
+    private String title;
+    private Uri imageUri;
+    private MediaItem selectedItem;
 
-    public DialogViewUiState copy(@Nullable String title, @Nullable Uri imageUri, @Nullable MediaItem selectedItem, @Nullable String errorMessage) {
-        return new DialogViewUiState(
-                title != null ? title : this.title,
-                imageUri != null ? imageUri : this.imageUri,
-                selectedItem,
-                errorMessage
-        );
+    @Bindable
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+        notifyPropertyChanged(BR.errorMessage);
+    }
+
+    @Bindable
+    public MediaItem getSelectedItem() {
+        return selectedItem;
+    }
+
+    public void setSelectedItem(MediaItem selectedItem) {
+        this.selectedItem = selectedItem;
+        notifyPropertyChanged(BR.selectedItem);
+    }
+
+    @Bindable
+    public Uri getImageUri() {
+        return imageUri;
+    }
+
+    public void setImageUri(Uri imageUri) {
+        this.imageUri = imageUri;
+        notifyPropertyChanged(BR.imageUri);
+    }
+
+    @Bindable
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+        notifyPropertyChanged(BR.title);
+    }
+
+    private String errorMessage;
+    private Boolean shouldDismiss;
+
+    public DialogViewUiState(String title, Uri imageUri, MediaItem selectedItem, String errorMessage, Boolean shouldDismiss) {
+        this.title = title;
+        this.imageUri = imageUri;
+        this.selectedItem = selectedItem;
+        this.errorMessage = errorMessage;
+        this.shouldDismiss = shouldDismiss;
+    }
+
+    public static final DialogViewUiState initialUiState = new DialogViewUiState("", null, null, null, false);
+
+    public Boolean getShouldDismiss() {
+        return shouldDismiss;
+    }
+
+    public void setShouldDismiss(Boolean shouldDismiss) {
+        this.shouldDismiss = shouldDismiss;
+    }
+
+    public DialogViewUiState copy(@Nullable String title, @Nullable Uri imageUri, @Nullable MediaItem selectedItem, @Nullable String errorMessage, Boolean shouldDismiss) {
+        return new DialogViewUiState(title != null ? title : this.title, imageUri != null ? imageUri : this.imageUri, selectedItem, errorMessage, shouldDismiss);
     }
 }

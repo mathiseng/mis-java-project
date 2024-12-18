@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -40,23 +39,28 @@ public class MediaItemDialogFragment extends DialogFragment {
 
         dialogViewViewModel = new ViewModelProvider(requireActivity()).get(DialogViewViewModel.class);
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        var uiState = dialogViewViewModel.uiState();
-        var mediaItem = uiState.getValue().selectedItem();
+        var uiState = dialogViewViewModel.uiState;
+        var mediaItem = uiState.getValue().getSelectedItem();
 
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         binding = DialogMediaItemBinding.inflate(inflater);
-        binding.setMediaItem(mediaItem);
-        binding.setViewModel(dialogViewViewModel);
 
         uiState.observe(requireActivity(), dialogViewUiState -> {
-            binding.setTitle(dialogViewUiState.title());
+            binding.setUiState(dialogViewUiState);
 
-            if (dialogViewUiState.imageUri() != null) {
-                binding.mediaItemImage.setImageURI(dialogViewUiState.imageUri());
+            if (dialogViewUiState.getImageUri() != null) {
+                binding.mediaItemImage.setImageURI(dialogViewUiState.getImageUri());
+            }
+
+            if (dialogViewUiState.getErrorMessage() != null) {
+                binding.editTextTitle.setError(dialogViewUiState.getErrorMessage());
+            }
+
+            if (dialogViewUiState.getShouldDismiss()) {
+                dismiss();
             }
         });
-        builder.setView(binding.getRoot())
-                .setPositiveButton(mediaItem == null ? "Erstellen" : "Ändern", null);
+        builder.setView(binding.getRoot()).setPositiveButton(mediaItem == null ? "Erstellen" : "Ändern", null);
 
         if (mediaItem != null) {
             builder.setNegativeButton("Löschen", (dialog, id) -> {
@@ -72,34 +76,18 @@ public class MediaItemDialogFragment extends DialogFragment {
         dialog.setOnShowListener(dialogInterface -> {
             Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
             positiveButton.setOnClickListener(v -> {
-
-                // Check if title is empty
-                if (dialogViewViewModel.uiState().getValue().title().isEmpty()) {
-                    binding.editTextTitle.setError("Titel darf nicht leer sein");
-                    return;  // Exit the listener, keeping the dialog open
-                }
-
-                if (dialogViewViewModel.uiState().getValue().imageUri() == null) {
-                    binding.editTextTitle.setError("Ein Bild muss ausgewählt werden");
-                    return;
-                }
-
-                // If title is not empty, save item
                 dialogViewViewModel.onSaveMediaItem(mediaItem);
-
-                // Close the dialog if validation is successful
-                dialog.dismiss();
             });
         });
 
-        ActivityResultLauncher<String> mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
-                new ActivityResultCallback<Uri>() {
-                    @Override
-                    public void onActivityResult(Uri uri) {
-                        // previewImage.setImageURI(uri);
-                        dialogViewViewModel.onImageChanged(uri);
-                    }
-                });
+        ActivityResultLauncher<String> mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
+            @Override
+            public void onActivityResult(Uri uri) {
+                // previewImage.setImageURI(uri);
+                dialogViewViewModel.onImageChanged(uri);
+            }
+        });
+
         binding.buttonSelectPicture.setOnClickListener((view -> {
             mGetContent.launch("image/*");
         }));

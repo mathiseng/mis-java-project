@@ -14,54 +14,63 @@ import com.example.mis_java_project.SharedStateRepository;
 import com.example.mis_java_project.data.model.MediaItem;
 import com.example.mis_java_project.utils.FileUtils;
 
-import java.util.Objects;
-
 public class DialogViewViewModel extends AndroidViewModel {
     private final MediaItemRepository mediaItemRepository;
 
-    private final MutableLiveData<DialogViewUiState> uiState = new MutableLiveData<>();
+    private final MutableLiveData<DialogViewUiState> _uiState = new MutableLiveData<>();
 
     private final SharedStateRepository sharedStateRepository;
 
-    public LiveData<DialogViewUiState> uiState() {
-        return uiState;
+    public LiveData<DialogViewUiState> uiState = _uiState;
+
+
+    public void setUiState(DialogViewUiState newState) {
+        _uiState.setValue(newState);
     }
 
+    //Flag that keeps the information wheter we should pass information to another Dialog or we reset them
+    private boolean preserveStateOnNavigation = false;
 
-    private String errorMessage = "Titel darf nicht Leer sein";
-
-    private boolean preserveStateOnNavigation = true;
-    private final boolean shouldResetSateOnClose;
-
-    private Context context;
+    private final Context context;
 
 
     public DialogViewViewModel(Application application) {
         super(application);
         this.context = application.getApplicationContext();
         mediaItemRepository = MediaItemRepository.getInstance(application);
-        uiState.setValue(new DialogViewUiState("", null, null, null));
+        _uiState.setValue(new DialogViewUiState("", null, null, null, false));
         sharedStateRepository = SharedStateRepository.getInstance();
         sharedStateRepository.selectedItem.observeForever(mediaItem -> {
             if (mediaItem != null) {
-                uiState.setValue(uiState.getValue().copy(mediaItem.getTitle(), mediaItem.getImageUri(), mediaItem, null));
+                _uiState.setValue(uiState.getValue().copy(mediaItem.getTitle(), mediaItem.getImageUri(), mediaItem, null, false));
             } else {
-                uiState.setValue(uiState.getValue().copy("", null, mediaItem, null));
+                _uiState.setValue(DialogViewUiState.initialUiState);
             }
         });
 
-        shouldResetSateOnClose = Boolean.TRUE.equals(sharedStateRepository.shouldResetStateOnClose.getValue());
+        // shouldResetSateOnClose = Boolean.TRUE.equals(sharedStateRepository.shouldResetStateOnClose.getValue());
     }
 
     public void onDeleteMediaItem(MediaItem mediaItem) {
         mediaItemRepository.delete(mediaItem);
-        uiState.setValue(uiState.getValue().copy("", null, null, null));
+        _uiState.setValue(uiState.getValue().copy("", null, null, null, false));
     }
 
     public void onSaveMediaItem(MediaItem mediaItem) {
         if (uiState.getValue() != null) {
-            var title = uiState.getValue().title();
-            var imageUri = uiState.getValue().imageUri();
+            var title = uiState.getValue().getTitle();
+            var imageUri = uiState.getValue().getImageUri();
+            if (uiState.getValue().getTitle().isEmpty()) {
+                _uiState.setValue(_uiState.getValue().copy(null, null, mediaItem, "Titel darf nicht leer sein", false));
+                return;
+            }
+
+            if (uiState.getValue().getImageUri() == null) {
+                _uiState.setValue(_uiState.getValue().copy(null, null, mediaItem, "Ein Bild muss ausgewählt werden", false));
+                return;
+            }
+
+
             if (mediaItem != null) {
                 var newMediaItem = new MediaItem(mediaItem);
                 newMediaItem.setTitle(title);
@@ -72,15 +81,8 @@ public class DialogViewViewModel extends AndroidViewModel {
                 MediaItem newItem = new MediaItem(title, imageUri.toString(), System.currentTimeMillis());
                 mediaItemRepository.insert(newItem);
             }
-            uiState.setValue(uiState.getValue().copy("", null, null, null));
-        }
-    }
 
-    public void onTextChanged(CharSequence charSequence) {
-        var text = charSequence.toString().trim();
-        if (uiState.getValue() != null) {
-            String errorMessage = text.isEmpty() ? this.errorMessage : null;
-            uiState.postValue(uiState.getValue().copy(text, null, uiState.getValue().selectedItem(), errorMessage));
+            _uiState.setValue(uiState.getValue().copy("", null, null, null, true));
         }
     }
 
@@ -92,11 +94,11 @@ public class DialogViewViewModel extends AndroidViewModel {
 
         if (uiState.getValue() != null) {
             //here we would check if we already typed in some title. If not then set the filename as a title ... here just using a method that is not working due to open issue
-            if (uiState.getValue().title().isBlank()) {
+            if (uiState.getValue().getTitle().isBlank()) {
                 var filename = FileUtils.getFileName(uri, context);
-                uiState.postValue(uiState.getValue().copy(filename, uri, uiState.getValue().selectedItem(), null));
+                _uiState.postValue(uiState.getValue().copy(filename, uri, uiState.getValue().getSelectedItem(), null, false));
             } else {
-                uiState.postValue(uiState.getValue().copy(null, uri, uiState.getValue().selectedItem(), null));
+                _uiState.postValue(uiState.getValue().copy(null, uri, uiState.getValue().getSelectedItem(), null, false));
             }
         }
     }
@@ -115,12 +117,12 @@ public class DialogViewViewModel extends AndroidViewModel {
      */
 
     public void onDismiss() {
-        if (preserveStateOnNavigation && shouldResetSateOnClose) {
+        if (!preserveStateOnNavigation && Boolean.TRUE.equals(sharedStateRepository.shouldResetStateOnClose.getValue())) {
             sharedStateRepository.onChangeSelectedMediaItem(null);
-            uiState.setValue(uiState.getValue().copy("", null, null, null));
+            _uiState.setValue(DialogViewUiState.initialUiState);
             sharedStateRepository.setResetStateOnClose(true);
         }
         //Reset value to default state after handling
-        preserveStateOnNavigation = true;
+        preserveStateOnNavigation = false;
     }
 }

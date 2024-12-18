@@ -36,8 +36,8 @@ public class MediaItemOptionsFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         dialogViewViewModel = new ViewModelProvider(requireActivity()).get(DialogViewViewModel.class);
-        var uiState = dialogViewViewModel.uiState();
-        var mediaItem = uiState.getValue().selectedItem();
+        var uiState = dialogViewViewModel.uiState;
+        var mediaItem = uiState.getValue().getSelectedItem();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
 
@@ -47,14 +47,14 @@ public class MediaItemOptionsFragment extends DialogFragment {
         builder.setView(binding.getRoot());
 
         binding.deleteButton.setOnClickListener(view -> {
-            dialogViewViewModel.setPreserveStateOnNavigation(false);
+            dialogViewViewModel.setPreserveStateOnNavigation(true);
             showConfirmDeletionDialog();
 
             dismiss();
         });
 
         binding.editButton.setOnClickListener(view -> {
-            dialogViewViewModel.setPreserveStateOnNavigation(false);
+            dialogViewViewModel.setPreserveStateOnNavigation(true);
             listViewViewModel.onEditItem(mediaItem);
             dismiss();
         });

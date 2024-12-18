@@ -3,20 +3,8 @@
     <data>
 
         <variable
-            name="viewModel"
-            type="com.example.mis_java_project.dialog.DialogViewViewModel" />
-
-        <variable
-            name="mediaItem"
-            type="com.example.mis_java_project.data.model.MediaItem" />
-
-        <variable
-            name="imageUri"
-            type="android.net.Uri" />
-
-        <variable
-            name="title"
-            type="String" />
+            name="uiState"
+            type="com.example.mis_java_project.dialog.DialogViewUiState" />
     </data>
 
     <LinearLayout
@@ -30,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@{mediaItem == null ? `Neues Medium` : `Medium editieren`}"
+            android:text="@{uiState.selectedItem == null ? `Neues Medium` : `Medium editieren`}"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -46,8 +34,7 @@
                 android:focusable="true"
                 android:hint="Titel"
                 android:inputType="text"
-                android:onTextChanged="@{(text, start, before, count) -> viewModel.onTextChanged(text)}"
-                android:text="@={title}">
+                android:text="@={uiState.title}">
 
                 <requestFocus />
             </EditText>

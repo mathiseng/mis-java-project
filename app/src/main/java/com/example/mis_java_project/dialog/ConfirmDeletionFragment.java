@@ -27,16 +27,16 @@ public class ConfirmDeletionFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         dialogViewViewModel = new ViewModelProvider(requireActivity()).get(DialogViewViewModel.class);
-        var uiState = dialogViewViewModel.uiState();
-        var mediaItem = uiState.getValue().selectedItem();
+        var uiState = dialogViewViewModel.uiState;
+        var mediaItem = uiState.getValue().getSelectedItem();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        dialogViewViewModel.setPreserveStateOnNavigation(false);
 
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         ConfirmDeletionDialogBinding binding = ConfirmDeletionDialogBinding.inflate(inflater);
         binding.setMediaItem(mediaItem);
         builder.setView(binding.getRoot()).setPositiveButton("Löschen", (dialog, id) -> {
-            dialogViewViewModel.setPreserveStateOnNavigation(false);
             dialogViewViewModel.onDeleteMediaItem(mediaItem);
         });
         builder.setNegativeButton("Abbrechen", (dialog, id) -> dismiss());
