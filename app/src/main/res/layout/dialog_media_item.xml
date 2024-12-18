@@ -13,6 +13,10 @@
         <variable
             name="imageUri"
             type="android.net.Uri" />
+
+        <variable
+            name="title"
+            type="String" />
     </data>
 
     <LinearLayout
@@ -43,7 +47,7 @@
                 android:hint="Titel"
                 android:inputType="text"
                 android:onTextChanged="@{(text, start, before, count) -> viewModel.onTextChanged(text)}"
-                android:text="@={mediaItem.title}">
+                android:text="@={title}">
 
                 <requestFocus />
             </EditText>

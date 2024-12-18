@@ -49,11 +49,9 @@ public class MediaItemDialogFragment extends DialogFragment {
         binding.setViewModel(dialogViewViewModel);
 
         uiState.observe(requireActivity(), dialogViewUiState -> {
-            Log.d("TESTII", "Change Image");
+            binding.setTitle(dialogViewUiState.title());
 
             if (dialogViewUiState.imageUri() != null) {
-                Log.d("TESTII", dialogViewUiState.imageUri().toString());
-                //  binding.setImageUri(dialogViewUiState.imageUri());
                 binding.mediaItemImage.setImageURI(dialogViewUiState.imageUri());
             }
         });
@@ -81,7 +79,7 @@ public class MediaItemDialogFragment extends DialogFragment {
                     return;  // Exit the listener, keeping the dialog open
                 }
 
-                if(dialogViewViewModel.uiState().getValue().imageUri() == null){
+                if (dialogViewViewModel.uiState().getValue().imageUri() == null) {
                     binding.editTextTitle.setError("Ein Bild muss ausgewählt werden");
                     return;
                 }

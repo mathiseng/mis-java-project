@@ -1,6 +1,7 @@
 package com.example.mis_java_project.dialog;
 
 import android.app.Application;
+import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
@@ -11,6 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.mis_java_project.MediaItemRepository;
 import com.example.mis_java_project.SharedStateRepository;
 import com.example.mis_java_project.data.model.MediaItem;
+import com.example.mis_java_project.utils.FileUtils;
 
 import java.util.Objects;
 
@@ -31,9 +33,12 @@ public class DialogViewViewModel extends AndroidViewModel {
     private boolean preserveStateOnNavigation = true;
     private final boolean shouldResetSateOnClose;
 
+    private Context context;
+
 
     public DialogViewViewModel(Application application) {
         super(application);
+        this.context = application.getApplicationContext();
         mediaItemRepository = MediaItemRepository.getInstance(application);
         uiState.setValue(new DialogViewUiState("", null, null, null));
         sharedStateRepository = SharedStateRepository.getInstance();
@@ -63,7 +68,7 @@ public class DialogViewViewModel extends AndroidViewModel {
                 newMediaItem.setImageUri(imageUri);
                 mediaItemRepository.update(newMediaItem);
             } else {
-                Log.d("TESTII,", Objects.requireNonNull(uiState().getValue()).toString());
+                //Log.d("TESTII,", Objects.requireNonNull(uiState().getValue()).toString());
                 MediaItem newItem = new MediaItem(title, imageUri.toString(), System.currentTimeMillis());
                 mediaItemRepository.insert(newItem);
             }
@@ -80,8 +85,19 @@ public class DialogViewViewModel extends AndroidViewModel {
     }
 
     public void onImageChanged(Uri uri) {
+
+        //actually can not extract the real file name out of URI because of open issue https://stackoverflow.com/a/77481599/20470359
+        // Issue is not resolved yet and might not be solved in future : https://issuetracker.google.com/issues/268079113
+        // var filename = FileUtils.getFileName(uri, context);
+
         if (uiState.getValue() != null) {
-            uiState.postValue(uiState.getValue().copy(null, uri, uiState.getValue().selectedItem(), errorMessage));
+            //here we would check if we already typed in some title. If not then set the filename as a title ... here just using a method that is not working due to open issue
+            if (uiState.getValue().title().isBlank()) {
+                var filename = FileUtils.getFileName(uri, context);
+                uiState.postValue(uiState.getValue().copy(filename, uri, uiState.getValue().selectedItem(), null));
+            } else {
+                uiState.postValue(uiState.getValue().copy(null, uri, uiState.getValue().selectedItem(), null));
+            }
         }
     }
 
