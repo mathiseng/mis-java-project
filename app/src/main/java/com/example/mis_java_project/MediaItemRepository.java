@@ -93,6 +93,8 @@ public class MediaItemRepository {
         });
     }
 
+    private void uploadImageToRemote(){}
+
     // Save URI to internal storage (this method contains the file-related logic)
     private Uri saveFileFromUri(Uri sourceUri) {
         try {

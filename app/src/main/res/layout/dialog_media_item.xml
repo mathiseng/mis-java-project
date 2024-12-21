@@ -2,6 +2,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="uiState"
             type="com.example.mis_java_project.dialog.DialogViewUiState" />
@@ -21,6 +23,27 @@
             android:text="@{uiState.selectedItem == null ? `Neues Medium` : `Medium editieren`}"
             android:textSize="18sp"
             android:textStyle="bold" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="@{uiState.selectedItem == null ? View.VISIBLE:View.GONE}">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:gravity="start"
+                android:text="Remote speichern" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_storage_option"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="@={uiState.isStoredInCloud}" />
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"

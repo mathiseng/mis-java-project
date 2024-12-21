@@ -14,10 +14,13 @@ public class MediaItem {
     private String imageSource;
     private long creationDate;
 
-    public MediaItem(String title, String imageSource, long creationDate) {
+    private StorageOption storageOption;
+
+    public MediaItem(String title, String imageSource, long creationDate, StorageOption storageOption) {
         this.title = title;
         this.imageSource = imageSource;
         this.creationDate = creationDate;
+        this.storageOption = storageOption;
     }
 
     public MediaItem(MediaItem mediaItem) {
@@ -25,6 +28,7 @@ public class MediaItem {
         this.title = mediaItem.title;
         this.imageSource = mediaItem.imageSource;
         this.creationDate = mediaItem.creationDate;
+        this.storageOption = mediaItem.storageOption;
     }
 
 
@@ -35,6 +39,10 @@ public class MediaItem {
 
     public String getImageSource() {
         return imageSource;
+    }
+
+    public StorageOption getStorageOption() {
+        return storageOption;
     }
 
     public long getCreationDate() {
@@ -60,6 +68,10 @@ public class MediaItem {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setStorageOption(StorageOption storageOption) {
+        this.storageOption = storageOption;
     }
 
     public void setImageUri(Uri imageSource) {

@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.mis_java_project.MediaItemRepository;
 import com.example.mis_java_project.SharedStateRepository;
 import com.example.mis_java_project.data.model.MediaItem;
+import com.example.mis_java_project.data.model.StorageOption;
 import com.example.mis_java_project.utils.FileUtils;
 
 public class DialogViewViewModel extends AndroidViewModel {
@@ -38,11 +39,11 @@ public class DialogViewViewModel extends AndroidViewModel {
         super(application);
         this.context = application.getApplicationContext();
         mediaItemRepository = MediaItemRepository.getInstance(application);
-        _uiState.setValue(new DialogViewUiState("", null, null, null, false));
+        _uiState.setValue(new DialogViewUiState("", null, null, null, false,false));
         sharedStateRepository = SharedStateRepository.getInstance();
         sharedStateRepository.selectedItem.observeForever(mediaItem -> {
             if (mediaItem != null) {
-                _uiState.setValue(uiState.getValue().copy(mediaItem.getTitle(), mediaItem.getImageUri(), mediaItem, null, false));
+                _uiState.setValue(uiState.getValue().copy(mediaItem.getTitle(), mediaItem.getImageUri(), mediaItem, null, false, mediaItem.getStorageOption() == StorageOption.REMOTE));
             } else {
                 _uiState.setValue(DialogViewUiState.initialUiState);
             }
@@ -53,20 +54,23 @@ public class DialogViewViewModel extends AndroidViewModel {
 
     public void onDeleteMediaItem(MediaItem mediaItem) {
         mediaItemRepository.delete(mediaItem);
-        _uiState.setValue(uiState.getValue().copy("", null, null, null, false));
+        _uiState.setValue(DialogViewUiState.initialUiState);
     }
 
     public void onSaveMediaItem(MediaItem mediaItem) {
         if (uiState.getValue() != null) {
             var title = uiState.getValue().getTitle();
             var imageUri = uiState.getValue().getImageUri();
+            var isStoresInCloud = uiState.getValue().getIsStoredInCloud();
+            var storageOption = isStoresInCloud ? StorageOption.REMOTE : StorageOption.LOCAL;
+
             if (uiState.getValue().getTitle().isEmpty()) {
-                _uiState.setValue(_uiState.getValue().copy(null, null, mediaItem, "Titel darf nicht leer sein", false));
+                _uiState.setValue(_uiState.getValue().copy(null, null, mediaItem, "Titel darf nicht leer sein", false, null));
                 return;
             }
 
             if (uiState.getValue().getImageUri() == null) {
-                _uiState.setValue(_uiState.getValue().copy(null, null, mediaItem, "Ein Bild muss ausgewählt werden", false));
+                _uiState.setValue(_uiState.getValue().copy(null, null, mediaItem, "Ein Bild muss ausgewählt werden", false, null));
                 return;
             }
 
@@ -75,14 +79,15 @@ public class DialogViewViewModel extends AndroidViewModel {
                 var newMediaItem = new MediaItem(mediaItem);
                 newMediaItem.setTitle(title);
                 newMediaItem.setImageUri(imageUri);
+                newMediaItem.setStorageOption(storageOption);
                 mediaItemRepository.update(newMediaItem);
             } else {
                 //Log.d("TESTII,", Objects.requireNonNull(uiState().getValue()).toString());
-                MediaItem newItem = new MediaItem(title, imageUri.toString(), System.currentTimeMillis());
+                MediaItem newItem = new MediaItem(title, imageUri.toString(), System.currentTimeMillis(), storageOption);
                 mediaItemRepository.insert(newItem);
             }
 
-            _uiState.setValue(uiState.getValue().copy("", null, null, null, true));
+            _uiState.setValue(uiState.getValue().copy("", null, null, null, true, false));
         }
     }
 
@@ -96,9 +101,9 @@ public class DialogViewViewModel extends AndroidViewModel {
             //here we would check if we already typed in some title. If not then set the filename as a title ... here just using a method that is not working due to open issue
             if (uiState.getValue().getTitle().isBlank()) {
                 var filename = FileUtils.getFileName(uri, context);
-                _uiState.postValue(uiState.getValue().copy(filename, uri, uiState.getValue().getSelectedItem(), null, false));
+                _uiState.postValue(uiState.getValue().copy(filename, uri, uiState.getValue().getSelectedItem(), null, false, null));
             } else {
-                _uiState.postValue(uiState.getValue().copy(null, uri, uiState.getValue().getSelectedItem(), null, false));
+                _uiState.postValue(uiState.getValue().copy(null, uri, uiState.getValue().getSelectedItem(), null, false, null));
             }
         }
     }
@@ -119,7 +124,7 @@ public class DialogViewViewModel extends AndroidViewModel {
     public void onDismiss() {
         if (!preserveStateOnNavigation && Boolean.TRUE.equals(sharedStateRepository.shouldResetStateOnClose.getValue())) {
             sharedStateRepository.onChangeSelectedMediaItem(null);
-            _uiState.setValue(DialogViewUiState.initialUiState);
+            _uiState.postValue(DialogViewUiState.initialUiState);
             sharedStateRepository.setResetStateOnClose(true);
         }
         //Reset value to default state after handling

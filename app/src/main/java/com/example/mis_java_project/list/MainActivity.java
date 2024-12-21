@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Observe ListView UiState changes
         mediaItemViewModel.uiState().observe(this, listViewUiState -> {
+            binding.setSelectedStorageOption(listViewUiState.selectedStorageOption());
             adapter.setMediaItems(listViewUiState.mediaItemList());
             if (listViewUiState.showDialog()) {
                 showMediaItemDialog();

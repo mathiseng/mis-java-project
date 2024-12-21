@@ -3,9 +3,15 @@
 
     <data>
 
+        <import type="com.example.mis_java_project.data.model.StorageOption" />
+
         <variable
             name="viewModel"
             type="com.example.mis_java_project.list.ListViewViewModel" />
+
+        <variable
+            name="selectedStorageOption"
+            type="com.example.mis_java_project.data.model.StorageOption" />
     </data>
 
     <LinearLayout
@@ -52,18 +58,91 @@
             android:clipToPadding="false"
             android:padding="8dp" />
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/material_dynamic_primary90"
             android:gravity="center"
-            android:padding="16dp">
+            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <!-- Box for Local -->
+            <LinearLayout
+                android:id="@+id/box_local"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Footer"
-                android:textSize="16sp" />
+                android:layout_weight="1"
+                android:background="@{selectedStorageOption == StorageOption.LOCAL ? @color/material_dynamic_primary90:@color/white}"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:onClick="@{view -> viewModel.onChangeSelectedStorageOption(StorageOption.LOCAL)}"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_local_storage" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Local"
+                    android:textAppearance="?attr/textAppearanceButton" />
+            </LinearLayout>
+
+            <!-- Box for Remote -->
+            <LinearLayout
+                android:id="@+id/box_remote"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@{selectedStorageOption == StorageOption.REMOTE ? @color/material_dynamic_primary90:@color/white}"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:onClick="@{view -> viewModel.onChangeSelectedStorageOption(StorageOption.REMOTE)}"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_remote_storage" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Remote"
+                    android:textAppearance="?attr/textAppearanceButton" />
+            </LinearLayout>
+
+            <!-- Box for Both -->
+            <LinearLayout
+                android:id="@+id/box_both"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@{selectedStorageOption == StorageOption.BOTH ? @color/material_dynamic_primary90:@color/white}"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:onClick="@{view -> viewModel.onChangeSelectedStorageOption(StorageOption.BOTH)}"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_both_storage" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="All"
+                    android:textAppearance="?attr/textAppearanceButton" />
+            </LinearLayout>
         </LinearLayout>
+
     </LinearLayout>
 </layout>
