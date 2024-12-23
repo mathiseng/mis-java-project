@@ -5,6 +5,10 @@ import android.net.Uri;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 @Entity(tableName = "media_items")
 public class MediaItem {
 
@@ -80,5 +84,10 @@ public class MediaItem {
 
     public Uri getImageUri() {
         return Uri.parse(imageSource);
+    }
+
+    public String getFormattedCreationDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy - HH:mm", Locale.getDefault());
+        return dateFormat.format(new Date(this.creationDate));
     }
 }

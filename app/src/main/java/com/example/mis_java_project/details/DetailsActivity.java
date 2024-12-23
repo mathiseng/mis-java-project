@@ -10,7 +10,9 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.example.mis_java_project.R;
+import com.example.mis_java_project.data.model.StorageOption;
 import com.example.mis_java_project.databinding.DetailsScreenBinding;
 import com.example.mis_java_project.dialog.ConfirmDeletionFragment;
 
@@ -31,7 +33,15 @@ public class DetailsActivity extends AppCompatActivity {
         DetailsScreenBinding binding = DataBindingUtil.setContentView(this, R.layout.details_screen);
         binding.setViewModel(detailsViewViewModel);
         binding.setMediaItem(detailsViewViewModel.uiState().getValue().selectedMediaItem());
-        binding.mediaImage.setImageURI(detailsViewViewModel.uiState().getValue().selectedMediaItem().getImageUri());
+
+        var item = detailsViewViewModel.uiState().getValue().selectedMediaItem();
+        if (item.getStorageOption() == StorageOption.REMOTE) {
+            Glide.with(this.getApplicationContext())
+                    .load(item.getImageUri())  // URI from Firebase
+                    .into(binding.mediaImage);
+        } else {
+            binding.mediaImage.setImageURI(item.getImageUri());
+        }
 
 
         //Observe ListView UiState changes

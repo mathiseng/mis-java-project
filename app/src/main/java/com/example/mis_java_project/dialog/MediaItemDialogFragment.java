@@ -16,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
+import com.example.mis_java_project.data.model.StorageOption;
 import com.example.mis_java_project.databinding.DialogMediaItemBinding;
 
 import java.util.Objects;
@@ -49,7 +51,12 @@ public class MediaItemDialogFragment extends DialogFragment {
             binding.setUiState(dialogViewUiState);
 
             if (dialogViewUiState.getImageUri() != null) {
-                binding.mediaItemImage.setImageURI(dialogViewUiState.getImageUri());
+                if (mediaItem != null && isAdded() && getContext() != null && mediaItem.getStorageOption() == StorageOption.REMOTE) {
+                    Glide.with(requireContext().getApplicationContext()).load(dialogViewUiState.getImageUri())
+                            .into(binding.mediaItemImage);
+                } else {
+                    binding.mediaItemImage.setImageURI(dialogViewUiState.getImageUri());
+                }
             }
 
             if (dialogViewUiState.getErrorMessage() != null) {
