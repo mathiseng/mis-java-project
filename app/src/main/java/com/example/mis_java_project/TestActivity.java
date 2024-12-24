@@ -12,6 +12,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import com.example.mis_java_project.dialog.ConfirmDeletionFragment;
 import com.example.mis_java_project.dialog.MediaItemDialogFragment;
 import com.google.android.material.navigation.NavigationView;
 
@@ -56,6 +57,14 @@ public class TestActivity extends AppCompatActivity implements NavigationView.On
         if (currentFragment instanceof ListFragment) {
             getMenuInflater().inflate(R.menu.menu_list, menu); // Inflate "Add" button for ListFragment
         }
+
+        if (currentFragment instanceof DetailsFragment) {
+            getMenuInflater().inflate(R.menu.menu_details, menu); // Inflate "Add" button for ListFragment
+        }
+
+        if (currentFragment instanceof MapFragment) {
+            getMenuInflater().inflate(R.menu.menu_map, menu); // Inflate "Add" button for ListFragment
+        }
         return true;
     }
 
@@ -66,12 +75,23 @@ public class TestActivity extends AppCompatActivity implements NavigationView.On
             showMediaItemDialog();
             return true;
         }
+
+        if (item.getItemId() == R.id.action_delete) {
+            // Handle "Add" button click
+            showConfirmDeletionDialog();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
     private void showMediaItemDialog() {
         MediaItemDialogFragment dialogFragment = new MediaItemDialogFragment();
         dialogFragment.show(getSupportFragmentManager(), "MediaItemDialogFragment");
+    }
+
+    private void showConfirmDeletionDialog() {
+        ConfirmDeletionFragment optionsFragment = new ConfirmDeletionFragment();
+        optionsFragment.show(getSupportFragmentManager(), "ConfirmDeletionFragment");
     }
 
     @Override

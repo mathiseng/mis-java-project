@@ -1,6 +1,5 @@
 package com.example.mis_java_project;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.mis_java_project.data.model.MediaItem;
 import com.example.mis_java_project.databinding.FragmentListBinding;
-import com.example.mis_java_project.details.DetailsActivity;
 import com.example.mis_java_project.dialog.MediaItemDialogFragment;
 import com.example.mis_java_project.list.ListViewViewModel;
 import com.example.mis_java_project.list.MediaItemListAdapter;
@@ -27,10 +25,18 @@ public class ListFragment extends Fragment {
     FragmentListBinding binding;
 
     @Override
+    public void onResume() {
+        super.onResume();
+        // Invalidate the options menu to trigger the re-creation of the toolbar menu
+        requireActivity().invalidateOptionsMenu();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
         mediaItemViewModel = new ViewModelProvider(requireActivity()).get(ListViewViewModel.class);
+        getActivity().setTitle("Media Items");
 
         //Binding
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list, container, false);
@@ -68,8 +74,6 @@ public class ListFragment extends Fragment {
 
     public void startDetailActivity(MediaItem mediaItem) {
         mediaItemViewModel.onSelectItem(mediaItem);
-        Intent intent = new Intent(requireContext(), DetailsActivity.class);
-
-        startActivity(intent);
+        requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new DetailsFragment()).addToBackStack(null).commit();
     }
 }
