@@ -10,9 +10,15 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import com.example.mis_java_project.databinding.FragmentMapBinding;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements OnMapReadyCallback {
     FragmentMapBinding binding;
 
 
@@ -23,6 +29,10 @@ public class MapFragment extends Fragment {
         //Binding
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false);
 
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
         getActivity().setTitle("Map");
 
         return binding.getRoot();
@@ -34,5 +44,14 @@ public class MapFragment extends Fragment {
         if (getActivity() != null) {
             getActivity().invalidateOptionsMenu();
         }
+    }
+
+    // Get a handle to the GoogleMap object and display marker.
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        googleMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(0, 0), 10));
+
     }
 }

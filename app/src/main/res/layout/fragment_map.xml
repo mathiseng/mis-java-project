@@ -6,11 +6,13 @@
         android:background="@android:color/darker_gray"
         tools:context=".MapFragment">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Map Fragment"
-            android:textSize="30.sp" />
+
+        <fragment xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".TestActivity" />
+
     </LinearLayout>
 </layout>

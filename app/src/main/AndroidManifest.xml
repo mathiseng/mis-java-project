@@ -33,6 +33,11 @@
             android:name=".details.DetailsActivity"
             android:exported="true"
             android:launchMode="standard"></activity>
-    </application>
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
+
+
+    </application>
 </manifest>
