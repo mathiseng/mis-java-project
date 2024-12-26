@@ -7,6 +7,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.metadata.exif.GpsDirectory;
+import com.google.android.gms.maps.model.LatLng;
+
+import java.io.InputStream;
+
 public class FileUtils {
 
     @SuppressLint("Range")
@@ -28,5 +34,20 @@ public class FileUtils {
                 return "";
             }
         }
+    }
+
+    public static LatLng extractLocationFromFile(Uri uri, Context context) {
+        try {
+            InputStream inputStream = context.getContentResolver().openInputStream(uri);
+            var metadata = ImageMetadataReader.readMetadata(inputStream);
+
+            var gpsDirectory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+            var latitude = gpsDirectory.getGeoLocation().getLatitude();
+            var longitude = gpsDirectory.getGeoLocation().getLongitude();
+
+            return new LatLng(latitude, longitude);
+        } catch (Exception Ignored) {
+        }
+        return null;
     }
 }

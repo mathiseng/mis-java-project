@@ -33,7 +33,6 @@ public class DetailsFragment extends Fragment {
         // Inflate the layout for this fragment
         inflater.inflate(R.layout.fragment_details, container, false);
 
-        getActivity().setTitle("Details");
         detailsViewViewModel = new ViewModelProvider(this).get(DetailsViewViewModel.class);
 
 
@@ -41,6 +40,8 @@ public class DetailsFragment extends Fragment {
         FragmentDetailsBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_details, container, false);
         binding.setViewModel(detailsViewViewModel);
         binding.setMediaItem(detailsViewViewModel.uiState().getValue().selectedMediaItem());
+        getActivity().setTitle("Details - " + detailsViewViewModel.uiState().getValue().selectedMediaItem().getTitle());
+
 
         var item = detailsViewViewModel.uiState().getValue().selectedMediaItem();
         if (item.getStorageOption() == StorageOption.REMOTE) {

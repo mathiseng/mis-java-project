@@ -5,6 +5,8 @@ import android.net.Uri;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -18,13 +20,24 @@ public class MediaItem {
     private String imageSource;
     private long creationDate;
 
+    private LatLng imageLocation;
+
+    public LatLng getImageLocation() {
+        return imageLocation;
+    }
+
+    public void setImageLocation(LatLng imageLocation) {
+        this.imageLocation = imageLocation;
+    }
+
     private StorageOption storageOption;
 
-    public MediaItem(String title, String imageSource, long creationDate, StorageOption storageOption) {
+    public MediaItem(String title, String imageSource, long creationDate, StorageOption storageOption, LatLng imageLocation) {
         this.title = title;
         this.imageSource = imageSource;
         this.creationDate = creationDate;
         this.storageOption = storageOption;
+        this.imageLocation = imageLocation;
     }
 
     public MediaItem(MediaItem mediaItem) {
@@ -33,6 +46,7 @@ public class MediaItem {
         this.imageSource = mediaItem.imageSource;
         this.creationDate = mediaItem.creationDate;
         this.storageOption = mediaItem.storageOption;
+        this.imageLocation = mediaItem.imageLocation;
     }
 
 

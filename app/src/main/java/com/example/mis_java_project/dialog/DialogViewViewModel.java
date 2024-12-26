@@ -3,7 +3,6 @@ package com.example.mis_java_project.dialog;
 import android.app.Application;
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -14,6 +13,7 @@ import com.example.mis_java_project.SharedStateRepository;
 import com.example.mis_java_project.data.model.MediaItem;
 import com.example.mis_java_project.data.model.StorageOption;
 import com.example.mis_java_project.utils.FileUtils;
+import com.google.android.gms.maps.model.LatLng;
 
 public class DialogViewViewModel extends AndroidViewModel {
     private final MediaItemRepository mediaItemRepository;
@@ -39,7 +39,7 @@ public class DialogViewViewModel extends AndroidViewModel {
         super(application);
         this.context = application.getApplicationContext();
         mediaItemRepository = MediaItemRepository.getInstance(application);
-        _uiState.setValue(new DialogViewUiState("", null, null, null, false,false));
+        _uiState.setValue(new DialogViewUiState("", null, null, null, false, false));
         sharedStateRepository = SharedStateRepository.getInstance();
         sharedStateRepository.selectedItem.observeForever(mediaItem -> {
             if (mediaItem != null) {
@@ -59,6 +59,7 @@ public class DialogViewViewModel extends AndroidViewModel {
 
     public void onSaveMediaItem(MediaItem mediaItem) {
         if (uiState.getValue() != null) {
+            var imageLocation = FileUtils.extractLocationFromFile(uiState.getValue().getImageUri(), context);
             var title = uiState.getValue().getTitle();
             var imageUri = uiState.getValue().getImageUri();
             var isStoresInCloud = uiState.getValue().getIsStoredInCloud();
@@ -80,10 +81,10 @@ public class DialogViewViewModel extends AndroidViewModel {
                 newMediaItem.setTitle(title);
                 newMediaItem.setImageUri(imageUri);
                 newMediaItem.setStorageOption(storageOption);
+                newMediaItem.setImageLocation(imageLocation != null ? imageLocation : new LatLng(52.52, 13.4));
                 mediaItemRepository.update(newMediaItem);
             } else {
-                //Log.d("TESTII,", Objects.requireNonNull(uiState().getValue()).toString());
-                MediaItem newItem = new MediaItem(title, imageUri.toString(), System.currentTimeMillis(), storageOption);
+                MediaItem newItem = new MediaItem(title, imageUri.toString(), System.currentTimeMillis(), storageOption, imageLocation != null ? imageLocation : new LatLng(53.0, 13.13));
                 mediaItemRepository.insert(newItem);
             }
 
