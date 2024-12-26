@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 
@@ -82,14 +83,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mapViewViewModel.uiState().observe(getViewLifecycleOwner(), mapViewUiState -> {
             //To prevent unneccessary updates i added flags for updating only markers or cameraPosition.
             if (mapViewUiState.shouldUpdateMarker()) {
-                googleMap.clear();
-                markerMediaItemMap.clear();
-                mapViewUiState.markerInfos().forEach(markerInfo -> {
-                    Marker marker = googleMap.addMarker(markerInfo.markerOption());
-                    markerMediaItemMap.put(marker, markerInfo.mediaItem());
-                });
-            }
 
+                //To remove marker in an efficient way and not redrawing the whole map we compare values of new items and existing ones
+                Iterator<Map.Entry<Marker, MediaItem>> iterator = markerMediaItemMap.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    Map.Entry<Marker, MediaItem> entry = iterator.next();
+                    // Check if the entry's MediaItem exists in the markerInfos
+                    boolean mediaItemExists = mapViewUiState.markerInfos().stream()
+                            .anyMatch(markerInfo -> markerInfo.mediaItem().equals(entry.getValue()));
+
+                    // If the mediaItem doesn't exist in the current markerInfos, remove the marker
+                    if (!mediaItemExists) {
+                        entry.getKey().remove();  // Remove the marker from the map
+                        iterator.remove();        // Remove the entry from the map
+                    }
+                }
+            }
 
             if (mapViewUiState.shouldUpdateCamera() && mapViewUiState.cameraPosition() != null) {
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mapViewUiState.cameraPosition().target, mapViewUiState.cameraPosition().zoom));
