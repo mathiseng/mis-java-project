@@ -8,10 +8,10 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.mis_java_project.repository.MediaItemRepository;
-import com.example.mis_java_project.repository.SharedStateRepository;
 import com.example.mis_java_project.data.model.MediaItem;
 import com.example.mis_java_project.data.model.StorageOption;
+import com.example.mis_java_project.repository.MediaItemRepository;
+import com.example.mis_java_project.repository.SharedStateRepository;
 import com.example.mis_java_project.utils.FileUtils;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -59,18 +59,18 @@ public class DialogViewViewModel extends AndroidViewModel {
 
     public void onSaveMediaItem(MediaItem mediaItem) {
         if (uiState.getValue() != null) {
-            var imageLocation = FileUtils.extractLocationFromFile(uiState.getValue().getImageUri(), context);
-            var title = uiState.getValue().getTitle();
-            var imageUri = uiState.getValue().getImageUri();
-            var isStoresInCloud = uiState.getValue().getIsStoredInCloud();
+            var imageLocation = FileUtils.extractLocationFromFile(uiState.getValue().imageUri(), context);
+            var title = uiState.getValue().title();
+            var imageUri = uiState.getValue().imageUri();
+            var isStoresInCloud = uiState.getValue().isStoredInCloud();
             var storageOption = isStoresInCloud ? StorageOption.REMOTE : StorageOption.LOCAL;
 
-            if (uiState.getValue().getTitle().isEmpty()) {
+            if (uiState.getValue().title().isEmpty()) {
                 _uiState.setValue(_uiState.getValue().copy(null, null, mediaItem, "Titel darf nicht leer sein", false, null));
                 return;
             }
 
-            if (uiState.getValue().getImageUri() == null) {
+            if (uiState.getValue().imageUri() == null) {
                 _uiState.setValue(_uiState.getValue().copy(null, null, mediaItem, "Ein Bild muss ausgewählt werden", false, null));
                 return;
             }
@@ -100,12 +100,26 @@ public class DialogViewViewModel extends AndroidViewModel {
 
         if (uiState.getValue() != null) {
             //here we would check if we already typed in some title. If not then set the filename as a title ... here just using a method that is not working due to open issue
-            if (uiState.getValue().getTitle().isBlank()) {
+            if (uiState.getValue().title().isBlank()) {
                 var filename = FileUtils.getFileName(uri, context);
-                _uiState.postValue(uiState.getValue().copy(filename, uri, uiState.getValue().getSelectedItem(), null, false, null));
+                _uiState.postValue(uiState.getValue().copy(filename, uri, uiState.getValue().selectedItem(), null, false, null));
             } else {
-                _uiState.postValue(uiState.getValue().copy(null, uri, uiState.getValue().getSelectedItem(), null, false, null));
+                _uiState.postValue(uiState.getValue().copy(null, uri, uiState.getValue().selectedItem(), null, false, null));
             }
+        }
+    }
+
+    public void onTextChanged(CharSequence charSequence) {
+        var text = charSequence.toString().trim();
+        if (uiState.getValue() != null) {
+            String errorMessage = text.isEmpty() ? this.uiState.getValue().errorMessage() : null;
+            _uiState.postValue(uiState.getValue().copy(text, null, uiState.getValue().selectedItem(), errorMessage, false, null));
+        }
+    }
+
+    public void onStorageOptionChanged() {
+        if (uiState.getValue() != null) {
+            _uiState.postValue(uiState.getValue().copy(null, null, uiState.getValue().selectedItem(), null, false, !uiState.getValue().isStoredInCloud()));
         }
     }
 

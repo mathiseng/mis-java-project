@@ -7,6 +7,11 @@
         <variable
             name="uiState"
             type="com.example.mis_java_project.dialog.DialogViewUiState" />
+
+        <variable
+            name="viewModel"
+            type="com.example.mis_java_project.dialog.DialogViewViewModel" />
+
     </data>
 
     <LinearLayout
@@ -42,7 +47,8 @@
                 android:id="@+id/switch_storage_option"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="@={uiState.isStoredInCloud}" />
+                android:checked="@{uiState.isStoredInCloud}"
+                android:onClick="@{(view) -> viewModel.onStorageOptionChanged()}" />
         </LinearLayout>
 
         <RelativeLayout
@@ -57,7 +63,8 @@
                 android:focusable="true"
                 android:hint="Titel"
                 android:inputType="text"
-                android:text="@={uiState.title}">
+                android:onTextChanged="@{(text, start, before, count) -> viewModel.onTextChanged(text)}"
+                android:text="@{uiState.title}">
 
                 <requestFocus />
             </EditText>

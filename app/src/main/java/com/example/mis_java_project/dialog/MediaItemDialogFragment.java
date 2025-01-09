@@ -42,28 +42,28 @@ public class MediaItemDialogFragment extends DialogFragment {
         dialogViewViewModel = new ViewModelProvider(requireActivity()).get(DialogViewViewModel.class);
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         var uiState = dialogViewViewModel.uiState;
-        var mediaItem = uiState.getValue().getSelectedItem();
+        var mediaItem = uiState.getValue().selectedItem();
 
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         binding = DialogMediaItemBinding.inflate(inflater);
+        binding.setViewModel(dialogViewViewModel);
 
         uiState.observe(requireActivity(), dialogViewUiState -> {
             binding.setUiState(dialogViewUiState);
 
-            if (dialogViewUiState.getImageUri() != null) {
+            if (dialogViewUiState.imageUri() != null) {
                 if (mediaItem != null && isAdded() && getContext() != null && mediaItem.getStorageOption() == StorageOption.REMOTE) {
-                    Glide.with(requireContext().getApplicationContext()).load(dialogViewUiState.getImageUri())
-                            .into(binding.mediaItemImage);
+                    Glide.with(requireContext().getApplicationContext()).load(dialogViewUiState.imageUri()).into(binding.mediaItemImage);
                 } else {
-                    binding.mediaItemImage.setImageURI(dialogViewUiState.getImageUri());
+                    binding.mediaItemImage.setImageURI(dialogViewUiState.imageUri());
                 }
             }
 
-            if (dialogViewUiState.getErrorMessage() != null) {
-                binding.editTextTitle.setError(dialogViewUiState.getErrorMessage());
+            if (dialogViewUiState.errorMessage() != null) {
+                binding.editTextTitle.setError(dialogViewUiState.errorMessage());
             }
 
-            if (dialogViewUiState.getShouldDismiss()) {
+            if (dialogViewUiState.shouldDismiss()) {
                 dismiss();
             }
         });

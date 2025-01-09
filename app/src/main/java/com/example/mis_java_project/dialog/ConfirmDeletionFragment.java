@@ -28,7 +28,7 @@ public class ConfirmDeletionFragment extends DialogFragment {
 
         dialogViewViewModel = new ViewModelProvider(requireActivity()).get(DialogViewViewModel.class);
         var uiState = dialogViewViewModel.uiState;
-        var mediaItem = uiState.getValue().getSelectedItem();
+        var mediaItem = uiState.getValue().selectedItem();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         dialogViewViewModel.setPreserveStateOnNavigation(false);
