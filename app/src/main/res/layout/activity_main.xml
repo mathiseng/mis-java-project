@@ -1,148 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <data>
-
-        <import type="com.example.mis_java_project.data.model.StorageOption" />
-
-        <variable
-            name="viewModel"
-            type="com.example.mis_java_project.list.ListViewViewModel" />
-
-        <variable
-            name="selectedStorageOption"
-            type="com.example.mis_java_project.data.model.StorageOption" />
-    </data>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:openDrawer="start"
+    android:fitsSystemWindows="false"
+    tools:context=".MainActivity">
 
     <LinearLayout
-        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/material_dynamic_primary90"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="16dp">
+            android:layout_height="56.dp"
+            android:background="@color/material_dynamic_primary80"
+            android:elevation="4.dp"
+            android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar" />
 
-            <ImageView
-                android:id="@+id/sandwich_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_menu" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingHorizontal="16.dp"
-                android:text="Medien"
-                android:textSize="24sp" />
-
-            <ImageView
-                android:id="@+id/add_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="@{view -> viewModel.onAddIconClicked()}"
-                android:src="@drawable/ic_add" />
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/media_item_list"
+        <FrameLayout
+            android:id="@+id/fragment_container"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:clipToPadding="false"
-            android:padding="8dp" />
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <!-- Box for Local -->
-            <LinearLayout
-                android:id="@+id/box_local"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@{selectedStorageOption == StorageOption.LOCAL ? @color/material_dynamic_primary90:@color/white}"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:onClick="@{view -> viewModel.onChangeSelectedStorageOption(StorageOption.LOCAL)}"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_local_storage" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Local"
-                    android:textAppearance="?attr/textAppearanceButton" />
-            </LinearLayout>
-
-            <!-- Box for Remote -->
-            <LinearLayout
-                android:id="@+id/box_remote"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@{selectedStorageOption == StorageOption.REMOTE ? @color/material_dynamic_primary90:@color/white}"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:onClick="@{view -> viewModel.onChangeSelectedStorageOption(StorageOption.REMOTE)}"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_remote_storage" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Remote"
-                    android:textAppearance="?attr/textAppearanceButton" />
-            </LinearLayout>
-
-            <!-- Box for Both -->
-            <LinearLayout
-                android:id="@+id/box_both"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@{selectedStorageOption == StorageOption.BOTH ? @color/material_dynamic_primary90:@color/white}"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:onClick="@{view -> viewModel.onChangeSelectedStorageOption(StorageOption.BOTH)}"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_both_storage" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="All"
-                    android:textAppearance="?attr/textAppearanceButton" />
-            </LinearLayout>
-        </LinearLayout>
+            android:layout_height="match_parent" />
 
     </LinearLayout>
-</layout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_menu"
+        app:itemTextColor="@color/material_dynamic_primary50"/>
+</androidx.drawerlayout.widget.DrawerLayout>

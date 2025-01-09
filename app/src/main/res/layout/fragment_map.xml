@@ -4,7 +4,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/darker_gray"
-        tools:context=".MapFragment">
+        tools:context=".map.MapFragment">
 
 
         <fragment xmlns:tools="http://schemas.android.com/tools"
@@ -12,7 +12,7 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".TestActivity" />
+            tools:context=".MainActivity" />
 
     </LinearLayout>
 </layout>

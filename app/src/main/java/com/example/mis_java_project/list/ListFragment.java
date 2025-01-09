@@ -1,4 +1,4 @@
-package com.example.mis_java_project;
+package com.example.mis_java_project.list;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,12 +10,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.mis_java_project.R;
 import com.example.mis_java_project.data.model.MediaItem;
 import com.example.mis_java_project.databinding.FragmentListBinding;
+import com.example.mis_java_project.details.DetailsFragment;
 import com.example.mis_java_project.dialog.MediaItemDialogFragment;
-import com.example.mis_java_project.list.ListViewViewModel;
-import com.example.mis_java_project.list.MediaItemListAdapter;
-import com.example.mis_java_project.list.MediaItemOptionsFragment;
 
 import java.util.ArrayList;
 

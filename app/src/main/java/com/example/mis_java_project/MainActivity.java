@@ -12,11 +12,14 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import com.example.mis_java_project.details.DetailsFragment;
 import com.example.mis_java_project.dialog.ConfirmDeletionFragment;
 import com.example.mis_java_project.dialog.MediaItemDialogFragment;
+import com.example.mis_java_project.list.ListFragment;
+import com.example.mis_java_project.map.MapFragment;
 import com.google.android.material.navigation.NavigationView;
 
-public class TestActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
 
@@ -24,7 +27,7 @@ public class TestActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_test);
+        setContentView(R.layout.activity_main);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

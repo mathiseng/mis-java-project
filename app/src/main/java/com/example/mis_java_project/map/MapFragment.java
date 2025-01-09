@@ -1,4 +1,4 @@
-package com.example.mis_java_project;
+package com.example.mis_java_project.map;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,8 +10,10 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.mis_java_project.R;
 import com.example.mis_java_project.data.model.MediaItem;
 import com.example.mis_java_project.databinding.FragmentMapBinding;
+import com.example.mis_java_project.details.DetailsFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;

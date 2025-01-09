@@ -8,8 +8,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.mis_java_project.MediaItemRepository;
-import com.example.mis_java_project.SharedStateRepository;
+import com.example.mis_java_project.repository.MediaItemRepository;
+import com.example.mis_java_project.repository.SharedStateRepository;
 import com.example.mis_java_project.data.model.MediaItem;
 import com.example.mis_java_project.data.model.StorageOption;
 import com.example.mis_java_project.utils.FileUtils;

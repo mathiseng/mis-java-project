@@ -22,7 +22,7 @@
         android:theme="@style/Theme.Misjavaproject"
         tools:targetApi="31">
         <activity
-            android:name=".TestActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
@@ -31,13 +31,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".list.MainActivity"
-            android:exported="true"></activity>
-        <activity
-            android:name=".details.DetailsActivity"
-            android:exported="true"
-            android:launchMode="standard"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

@@ -1,4 +1,4 @@
-package com.example.mis_java_project;
+package com.example.mis_java_project.map;
 
 import android.app.Application;
 import android.util.Log;
@@ -7,6 +7,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.mis_java_project.repository.MediaItemRepository;
+import com.example.mis_java_project.repository.SharedStateRepository;
 import com.example.mis_java_project.data.model.MediaItem;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;

@@ -1,4 +1,4 @@
-package com.example.mis_java_project;
+package com.example.mis_java_project.details;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,9 +11,9 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
+import com.example.mis_java_project.R;
 import com.example.mis_java_project.data.model.StorageOption;
 import com.example.mis_java_project.databinding.FragmentDetailsBinding;
-import com.example.mis_java_project.details.DetailsViewViewModel;
 import com.example.mis_java_project.dialog.ConfirmDeletionFragment;
 
 
